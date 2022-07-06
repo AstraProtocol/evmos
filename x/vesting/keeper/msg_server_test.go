@@ -9,9 +9,9 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sdkvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/AstraProtocol/astra/v2/testutil"
-	"github.com/AstraProtocol/astra/v2/x/vesting/types"
-	"github.com/tharsis/ethermint/tests"
+	"github.com/evmos/ethermint/tests"
+	"github.com/evmos/evmos/v6/testutil"
+	"github.com/evmos/evmos/v6/x/vesting/types"
 )
 
 var (
@@ -175,7 +175,7 @@ func (suite *KeeperTestSuite) TestMsgCreateClawbackVestingAccount() {
 			vestingPeriods,
 			true,
 			1000,
-			true,
+			false,
 		},
 	}
 	for _, tc := range testCases {
@@ -193,7 +193,6 @@ func (suite *KeeperTestSuite) TestMsgCreateClawbackVestingAccount() {
 				tc.startTime,
 				tc.lockup,
 				tc.vesting,
-				tc.merge,
 			)
 			res, err := suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)
 
@@ -300,7 +299,7 @@ func (suite *KeeperTestSuite) TestMsgClawback() {
 			testutil.FundAccount(suite.app.BankKeeper, suite.ctx, addr, balances)
 
 			// Create Clawback Vesting Account
-			createMsg := types.NewMsgCreateClawbackVestingAccount(addr, addr2, tc.startTime, lockupPeriods, vestingPeriods, false)
+			createMsg := types.NewMsgCreateClawbackVestingAccount(addr, addr2, tc.startTime, lockupPeriods, vestingPeriods)
 			createRes, err := suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, createMsg)
 			suite.Require().NoError(err)
 			suite.Require().NotNil(createRes)
