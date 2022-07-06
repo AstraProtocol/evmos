@@ -110,9 +110,7 @@ with a start time and an array of coins strings and durations relative to the st
 
 			commonStart, _ := types.AlignSchedules(lockupStart, vestingStart, lockupPeriods, vestingPeriods)
 
-			merge, _ := cmd.Flags().GetBool(FlagMerge)
-
-			msg := types.NewMsgCreateClawbackVestingAccount(clientCtx.GetFromAddress(), toAddr, time.Unix(commonStart, 0), lockupPeriods, vestingPeriods, merge)
+			msg := types.NewMsgCreateClawbackVestingAccount(clientCtx.GetFromAddress(), toAddr, time.Unix(commonStart, 0), lockupPeriods, vestingPeriods)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -121,7 +119,6 @@ with a start time and an array of coins strings and durations relative to the st
 		},
 	}
 
-	cmd.Flags().Bool(FlagMerge, false, "Merge new amount and schedule with existing ClawbackVestingAccount, if any")
 	cmd.Flags().String(FlagLockup, "", "path to file containing unlocking periods")
 	cmd.Flags().String(FlagVesting, "", "path to file containing vesting periods")
 	flags.AddTxFlagsToCmd(cmd)
