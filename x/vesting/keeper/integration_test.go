@@ -30,7 +30,7 @@ import (
 // employee starts before mainnet launch (periodsCliff < lockupPeriod)
 
 // Example:
-// 21/10 Employee joins Evmos and vesting starts
+// 21/10 Employee joins Astra and vesting starts
 // 22/03 Mainnet launch
 // 22/09 Cliff ends
 // 23/02 Lock ends
@@ -210,7 +210,7 @@ var _ = Describe("Clawback Vesting Accounts", Ordered, func() {
 })
 
 // Example:
-// 21/10 Employee joins Evmos and vesting starts
+// 21/10 Employee joins Astra and vesting starts
 // 22/03 Mainnet launch
 // 22/09 Cliff ends
 // 23/02 Lock ends
@@ -271,7 +271,7 @@ var _ = Describe("Clawback Vesting Accounts - claw back tokens", Ordered, func()
 		s.Require().Equal(balanceGrantee, sdk.NewInt64Coin(stakeDenom, 0))
 		s.Require().Equal(balanceDest, sdk.NewInt64Coin(stakeDenom, 0))
 
-		msg := types.NewMsgCreateClawbackVestingAccount(funder, grantee, vestingStart, lockupPeriods, vestingPeriods, true)
+		msg := types.NewMsgCreateClawbackVestingAccount(funder, grantee, vestingStart, lockupPeriods, vestingPeriods)
 
 		_, err := s.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)
 		s.Require().NoError(err)
@@ -449,7 +449,7 @@ func delegate(clawbackAccount *types.ClawbackVestingAccount, amount int64) error
 	addr, err := sdk.AccAddressFromBech32(clawbackAccount.Address)
 	s.Require().NoError(err)
 	//
-	val, err := sdk.ValAddressFromBech32("evmosvaloper1z3t55m0l9h0eupuz3dp5t5cypyv674jjn4d6nn")
+	val, err := sdk.ValAddressFromBech32("astra1rxtgv00gfaapm3pxup4wv9t3h9u6tcnw9lw8kh")
 	s.Require().NoError(err)
 	delegateMsg := stakingtypes.NewMsgDelegate(addr, val, sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, sdk.NewInt(amount)))
 	txBuilder.SetMsgs(delegateMsg)

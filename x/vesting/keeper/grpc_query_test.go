@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestBalances() {
 			"invalid address",
 			func() {
 				req = &types.QueryBalancesRequest{
-					Address: "evmos1",
+					Address: "astra1",
 				}
 			},
 			false,
@@ -75,7 +75,6 @@ func (suite *KeeperTestSuite) TestBalances() {
 					vestingStart,
 					lockupPeriods,
 					vestingPeriods,
-					false,
 				)
 				ctx := sdk.WrapSDKContext(suite.ctx)
 				_, err = suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)
