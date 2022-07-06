@@ -271,7 +271,7 @@ var _ = Describe("Clawback Vesting Accounts - claw back tokens", Ordered, func()
 		s.Require().Equal(balanceGrantee, sdk.NewInt64Coin(stakeDenom, 0))
 		s.Require().Equal(balanceDest, sdk.NewInt64Coin(stakeDenom, 0))
 
-		msg := types.NewMsgCreateClawbackVestingAccount(funder, grantee, vestingStart, lockupPeriods, vestingPeriods, true)
+		msg := types.NewMsgCreateClawbackVestingAccount(funder, grantee, vestingStart, lockupPeriods, vestingPeriods)
 
 		_, err := s.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)
 		s.Require().NoError(err)
