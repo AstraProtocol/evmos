@@ -27,7 +27,6 @@ func (suite *MsgsTestSuite) TestMsgCreateClawbackVestingAccountGetters() {
 		time.Unix(100200300, 0),
 		sdkvesting.Periods{{Length: 200000, Amount: sdk.Coins{sdk.NewInt64Coin("atom", 10000000)}}},
 		sdkvesting.Periods{{Length: 300000, Amount: sdk.Coins{sdk.NewInt64Coin("atom", 10000000)}}},
-		true,
 	)
 	suite.Require().Equal(RouterKey, msg.Route())
 	suite.Require().Equal(TypeMsgCreateClawbackVestingAccount, msg.Type())
@@ -65,7 +64,6 @@ func (suite *MsgsTestSuite) TestMsgCreateClawbackVestingAccountNew() {
 			tc.startTime,
 			tc.lockupPeriods,
 			tc.vestingPeriods,
-			tc.merge,
 		)
 		err := tx.ValidateBasic()
 
@@ -167,7 +165,6 @@ func (suite *MsgsTestSuite) TestMsgCreateClawbackVestingAccount() {
 			tc.startTime,
 			tc.lockupPeriods,
 			tc.vestingPeriods,
-			tc.merge,
 		}
 		err := tx.ValidateBasic()
 
