@@ -75,6 +75,7 @@ func (suite *KeeperTestSuite) TestBalances() {
 					vestingStart,
 					lockupPeriods,
 					vestingPeriods,
+					false,
 				)
 				ctx := sdk.WrapSDKContext(suite.ctx)
 				_, err = suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)

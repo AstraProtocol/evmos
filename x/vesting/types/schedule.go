@@ -11,6 +11,7 @@ import (
 // value at the last step, which can speed evaluation of the step function after
 // the last step.
 //
+// ReadSchedule returns the value of a schedule at readTime.
 func ReadSchedule(
 	startTime, endTime int64,
 	periods sdkvesting.Periods,
