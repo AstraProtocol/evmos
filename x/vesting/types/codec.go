@@ -26,14 +26,9 @@ var (
 
 const (
 	// Amino names
-	createClawbackVestingAccount = "astra/MsgCreateClawbackVestingAccount"
-	clawback                     = "astra/MsgClawback"
+	createClawbackVestingAccount = "evmos/MsgCreateClawbackVestingAccount"
+	clawback                     = "evmos/MsgClawback"
 )
-
-func init() {
-	RegisterLegacyAminoCodec(amino)
-	amino.Seal()
-}
 
 // RegisterInterfaces associates protoName with AccountI and VestingAccount
 // Interfaces and creates a registry of it's concrete implementations
