@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/armon/go-metrics"
@@ -75,9 +76,11 @@ func (k Keeper) CreateClawbackVestingAccount(
 		vestingAcc, isClawback = acc.(*types.ClawbackVestingAccount)
 
 		switch {
-		case isClawback:
+		case !msg.Merge && isClawback:
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "account %s already exists; consider using --merge", msg.ToAddress)
+		case !msg.Merge && !isClawback:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "account %s already exists", msg.ToAddress)
-		case !isClawback:
+		case msg.Merge && !isClawback:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "account %s must be a clawback vesting account", msg.ToAddress)
 		case msg.FromAddress != vestingAcc.FunderAddress:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "account %s can only accept grants from account %s", msg.ToAddress, vestingAcc.FunderAddress)
@@ -131,6 +134,7 @@ func (k Keeper) CreateClawbackVestingAccount(
 				sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress),
 				sdk.NewAttribute(types.AttributeKeyCoins, vestingCoins.String()),
 				sdk.NewAttribute(types.AttributeKeyStartTime, msg.StartTime.String()),
+				sdk.NewAttribute(types.AttributeKeyMerge, strconv.FormatBool(msg.Merge)),
 				sdk.NewAttribute(types.AttributeKeyAccount, msg.ToAddress),
 			),
 		},
