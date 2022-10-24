@@ -111,6 +111,7 @@ import (
 	v2 "github.com/evmos/evmos/v6/app/upgrades/v2"
 	v4 "github.com/evmos/evmos/v6/app/upgrades/v4"
 	v5 "github.com/evmos/evmos/v6/app/upgrades/v5"
+	v6 "github.com/evmos/evmos/v6/app/upgrades/v6"
 	"github.com/evmos/evmos/v6/x/claims"
 	claimskeeper "github.com/evmos/evmos/v6/x/claims/keeper"
 	claimstypes "github.com/evmos/evmos/v6/x/claims/types"
@@ -121,9 +122,6 @@ import (
 	erc20client "github.com/evmos/evmos/v6/x/erc20/client"
 	erc20keeper "github.com/evmos/evmos/v6/x/erc20/keeper"
 	erc20types "github.com/evmos/evmos/v6/x/erc20/types"
-	"github.com/evmos/evmos/v6/x/fees"
-	feeskeeper "github.com/evmos/evmos/v6/x/fees/keeper"
-	feestypes "github.com/evmos/evmos/v6/x/fees/types"
 	"github.com/evmos/evmos/v6/x/incentives"
 	incentivesclient "github.com/evmos/evmos/v6/x/incentives/client"
 	incentiveskeeper "github.com/evmos/evmos/v6/x/incentives/keeper"
@@ -196,7 +194,6 @@ var (
 		epochs.AppModuleBasic{},
 		claims.AppModuleBasic{},
 		recovery.AppModuleBasic{},
-		fees.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -278,7 +275,6 @@ type Evmos struct {
 	EpochsKeeper     epochskeeper.Keeper
 	VestingKeeper    vestingkeeper.Keeper
 	RecoveryKeeper   *recoverykeeper.Keeper
-	FeesKeeper       feeskeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -335,7 +331,6 @@ func NewEvmos(
 		// evmos keys
 		inflationtypes.StoreKey, erc20types.StoreKey, incentivestypes.StoreKey,
 		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,
-		feestypes.StoreKey,
 	)
 
 	// Add the EVM transient store key
@@ -464,12 +459,6 @@ func NewEvmos(
 		app.AccountKeeper, app.BankKeeper, app.InflationKeeper, app.StakingKeeper, app.EvmKeeper,
 	)
 
-	app.FeesKeeper = feeskeeper.NewKeeper(
-		keys[feestypes.StoreKey], appCodec, app.GetSubspace(feestypes.ModuleName),
-		app.BankKeeper, app.EvmKeeper,
-		authtypes.FeeCollectorName,
-	)
-
 	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
 	app.EpochsKeeper = *epochsKeeper.SetHooks(
 		epochskeeper.NewMultiEpochHooks(
@@ -489,7 +478,6 @@ func NewEvmos(
 		evmkeeper.NewMultiEvmHooks(
 			app.Erc20Keeper.Hooks(),
 			app.IncentivesKeeper.Hooks(),
-			app.FeesKeeper.Hooks(),
 			app.ClaimsKeeper.Hooks(),
 		),
 	)
@@ -591,7 +579,6 @@ func NewEvmos(
 		claims.NewAppModule(appCodec, *app.ClaimsKeeper),
 		vesting.NewAppModule(app.VestingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		recovery.NewAppModule(*app.RecoveryKeeper),
-		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -628,7 +615,6 @@ func NewEvmos(
 		claimstypes.ModuleName,
 		incentivestypes.ModuleName,
 		recoverytypes.ModuleName,
-		feestypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -661,7 +647,6 @@ func NewEvmos(
 		erc20types.ModuleName,
 		incentivestypes.ModuleName,
 		recoverytypes.ModuleName,
-		feestypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -701,7 +686,6 @@ func NewEvmos(
 		incentivestypes.ModuleName,
 		epochstypes.ModuleName,
 		recoverytypes.ModuleName,
-		feestypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
 	)
@@ -1021,7 +1005,6 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(claimstypes.ModuleName)
 	paramsKeeper.Subspace(incentivestypes.ModuleName)
 	paramsKeeper.Subspace(recoverytypes.ModuleName)
-	paramsKeeper.Subspace(feestypes.ModuleName)
 	return paramsKeeper
 }
 
@@ -1057,6 +1040,20 @@ func (app *Evmos) setupUpgradeHandlers() {
 		),
 	)
 
+	// v6 upgrade handler
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v6.UpgradeName,
+		v6.CreateUpgradeHandler(
+			app.mm, app.configurator,
+			app.BankKeeper,
+			app.ClaimsKeeper,
+			app.StakingKeeper,
+			app.ParamsKeeper,
+			app.TransferKeeper,
+			app.SlashingKeeper,
+		),
+	)
+
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
 	// This will read that value, and execute the preparations for the upgrade.
@@ -1078,6 +1075,8 @@ func (app *Evmos) setupUpgradeHandlers() {
 		// no store upgrades in v4
 	case v5.UpgradeName:
 		// no store upgrades in v5
+	case v6.UpgradeName:
+		// no store upgrades in v6
 	}
 
 	if storeUpgrades != nil {
