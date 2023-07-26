@@ -3,18 +3,19 @@ package keeper_test
 import (
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	transfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
-	ibcgotesting "github.com/cosmos/ibc-go/v3/testing"
-	ibcmock "github.com/cosmos/ibc-go/v3/testing/mock"
+	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	ibcgotesting "github.com/cosmos/ibc-go/v6/testing"
+	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 
-	"github.com/evmos/evmos/v6/x/claims/types"
+	"github.com/evmos/evmos/v12/x/claims/types"
 )
 
 var timeoutHeight = clienttypes.NewHeight(1000, 1000)
@@ -24,6 +25,7 @@ func (suite *KeeperTestSuite) TestAckknowledgementPacket() {
 	timeoutHeight = clienttypes.NewHeight(0, 100)
 	mockpacket := channeltypes.NewPacket(ibcgotesting.MockPacketData, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, disabledTimeoutTimestamp)
 	ack := ibcmock.MockAcknowledgement
+	ackFail := ibcmock.MockFailAcknowledgement
 
 	testCases := []struct {
 		name string
@@ -34,9 +36,10 @@ func (suite *KeeperTestSuite) TestAckknowledgementPacket() {
 			func() {
 				params := suite.app.ClaimsKeeper.GetParams(suite.ctx)
 				params.EnableClaims = false
-				suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				err := suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				suite.Require().NoError(err)
 
-				err := suite.app.ClaimsKeeper.OnAcknowledgementPacket(suite.ctx, mockpacket, ack.Acknowledgement())
+				err = suite.app.ClaimsKeeper.OnAcknowledgementPacket(suite.ctx, mockpacket, ack.Acknowledgement())
 				suite.Require().NoError(err)
 			},
 		},
@@ -57,10 +60,9 @@ func (suite *KeeperTestSuite) TestAckknowledgementPacket() {
 		{
 			"no-op: error Ack",
 			func() {
-				err := sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet data")
-				ack := transfertypes.NewErrorAcknowledgement(err)
-				err = suite.app.ClaimsKeeper.OnAcknowledgementPacket(suite.ctx, mockpacket, ack.Acknowledgement())
+				err := suite.app.ClaimsKeeper.OnAcknowledgementPacket(suite.ctx, mockpacket, ackFail.Acknowledgement())
 				suite.Require().NoError(err)
+				_ = suite.app.ClaimsKeeper.OnAcknowledgementPacket(suite.ctx, mockpacket, ackFail.Acknowledgement())
 			},
 		},
 		{
@@ -170,7 +172,8 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			func() {
 				params := suite.app.ClaimsKeeper.GetParams(suite.ctx)
 				params.EnableClaims = false
-				suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				err := suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				suite.Require().NoError(err)
 
 				resAck := suite.app.ClaimsKeeper.OnRecvPacket(suite.ctx, mockpacket, ack)
 				suite.Require().Equal(ack, resAck)
@@ -179,8 +182,8 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"fail - non ics20 packet",
 			func() {
-				err := sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet data")
-				expectedAck := channeltypes.NewErrorAcknowledgement(err.Error())
+				err := errorsmod.Wrapf(errortypes.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet data")
+				expectedAck := channeltypes.NewErrorAcknowledgement(err)
 				resAck := suite.app.ClaimsKeeper.OnRecvPacket(suite.ctx, mockpacket, ack)
 				suite.Require().Equal(expectedAck, resAck)
 			},
@@ -189,7 +192,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			"fail - blocked recipient (deny list)",
 			func() {
 				blockedAddr := authtypes.NewModuleAddress(transfertypes.ModuleName)
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, blockedAddr.String())
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, blockedAddr.String(), "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -200,7 +203,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"no-op - sender record found with ibc action already claimed",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -222,7 +225,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"fail - invalid sender",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", "evmos", receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", "evmos", receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -233,7 +236,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"fail - invalid sender 2",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", "badba1sv9m0g7ycejwr3s369km58h5qe7xj77hvcxrms", receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", "badba1sv9m0g7ycejwr3s369km58h5qe7xj77hvcxrms", receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -244,7 +247,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"fail - invalid recipient",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", receiverStr, "badbadhf0468jjpe6m6vx38s97z2qqe8ldu0njdyf625")
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", receiverStr, "badbadhf0468jjpe6m6vx38s97z2qqe8ldu0njdyf625", "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -256,7 +259,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"no-op - channel not authorized",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-100", timeoutHeight, 0)
 
@@ -267,7 +270,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"fail - sender and receiver address are the same (with claim record)",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -280,7 +283,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"pass - sender and receiver address is the same (no claim record) - attempt recovery",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -291,7 +294,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 1: no-op - sender ≠ recipient, but wrong trigger amount",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -308,7 +311,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 1: fail - not enough funds on escrow account",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -325,7 +328,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 1: pass/merge - sender ≠ recipient",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -351,7 +354,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 2: no-op - same sender ≠ recipient, sender claims record found, but wrong types.IBCTriggerAmt",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -368,7 +371,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 2: no-op - same sender ≠ recipient, sender claims record found, not enough escowed funds",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -385,7 +388,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 2: pass/migrate - same sender ≠ recipient, sender claims record found",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", types.IBCTriggerAmt, senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -411,7 +414,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 3: fail - not enough funds on escrow account",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 				suite.app.ClaimsKeeper.SetClaimsRecord(suite.ctx, receiver, types.NewClaimsRecord(sdk.NewInt(1000000000000000)))
@@ -429,7 +432,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 3: pass/claim - same sender ≠ recipient, recipient claims record found",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -449,9 +452,10 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				params.AuthorizedChannels = []string{
 					"channel-2", // Injective
 				}
-				suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				err = suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				suite.Require().NoError(err)
 
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, types.DefaultEVMChannels[0], timeoutHeight, 0)
 
@@ -479,9 +483,10 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					"channel-0", // Osmosis
 					"channel-3", // Cosmos Hub
 				}
-				suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				err := suite.app.ClaimsKeeper.SetParams(suite.ctx, params)
+				suite.Require().NoError(err)
 
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, types.DefaultEVMChannels[0], timeoutHeight, 0)
 
@@ -500,7 +505,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 3: claim - sender ≠ recipient, recipient claims record found, where ibc is last action",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, "channel-0", timeoutHeight, 0)
 
@@ -528,7 +533,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 4: no-op - sender different than recipient, no claims records",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", senderStr, receiverStr, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, types.DefaultAuthorizedChannels[0], timeoutHeight, 0)
 
@@ -542,7 +547,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			"case 4: no-op - same sender with EVM channel, no claims record",
 			func() {
-				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos)
+				transfer := transfertypes.NewFungibleTokenPacketData("aevmos", "100", secpAddrCosmos, secpAddrEvmos, "")
 				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
 				packet := channeltypes.NewPacket(bz, 1, transfertypes.PortID, "channel-0", transfertypes.PortID, types.DefaultEVMChannels[0], timeoutHeight, 0)
 

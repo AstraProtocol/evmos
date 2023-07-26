@@ -31,22 +31,31 @@ parent:
   <a href="https://github.com/evmos/evmos/actions?query=branch%3Amain+workflow%3ALint">
     <img alt="Lint Status" src="https://github.com/evmos/evmos/actions/workflows/lint.yml/badge.svg?branch=main" />
   </a>
-  <a href="https://codecov.io/gh/tharsis/evmos">
-    <img alt="Code Coverage" src="https://codecov.io/gh/tharsis/evmos/branch/main/graph/badge.svg" />
+  <a href="https://codecov.io/gh/evmos/evmos">
+    <img alt="Code Coverage" src="https://codecov.io/gh/evmos/evmos/branch/main/graph/badge.svg" />
   </a>
   <a href="https://twitter.com/EvmosOrg">
     <img alt="Twitter Follow Evmos" src="https://img.shields.io/twitter/follow/EvmosOrg"/>
   </a>
 </div>
 
-Evmos is a scalable, high-throughput Proof-of-Stake blockchain that is fully compatible and
-interoperable with Ethereum. It's built using the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk/) which runs on top of [Tendermint Core](https://github.com/tendermint/tendermint) consensus engine.
+Evmos is a scalable, high-throughput Proof-of-Stake blockchain
+that is fully compatible and interoperable with Ethereum.
+It's built using the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk/)
+which runs on top of the [Tendermint Core](https://github.com/tendermint/tendermint) consensus engine.
 
-**Note**: Requires [Go 1.18+](https://golang.org/dl/)
+## Documentation
+
+Our documentation is hosted in a [separate repository](https://github.com/evmos/docs) and can be found at [docs.evmos.org](https://docs.evmos.org).
+Head over there and check it out.
+
+**Note**: Requires [Go 1.20+](https://golang.org/dl/)
 
 ## Installation
 
-For prerequisites and detailed build instructions please read the [Installation](https://evmos.dev/quickstart/installation.html) instructions. Once the dependencies are installed, run:
+For prerequisites and detailed build instructions
+please read the [Installation](https://docs.evmos.org/protocol/evmos-cli) instructions.
+Once the dependencies are installed, run:
 
 ```bash
 make install
@@ -56,7 +65,9 @@ Or check out the latest [release](https://github.com/evmos/evmos/releases).
 
 ## Quick Start
 
-To learn how the Evmos works from a high-level perspective, go to the [Introduction](https://evmos.dev/intro/overview.html) section from the documentation. You can also check the instructions to [Run a Node](https://evmos.dev/quickstart/run_node.html).
+To learn how the Evmos works from a high-level perspective,
+go to the [Protocol Overview](https://docs.evmos.org/protocol) section from the documentation.
+You can also check the instructions to [Run a Node](https://docs.evmos.org/protocol/evmos-cli#run-an-evmos-node).
 
 ## Community
 
@@ -65,14 +76,15 @@ The following chat channels and forums are a great spot to ask questions about E
 - [Evmos Twitter](https://twitter.com/EvmosOrg)
 - [Evmos Discord](https://discord.gg/evmos)
 - [Evmos Forum](https://commonwealth.im/evmos)
-- [Tharsis Twitter](https://twitter.com/TharsisHQ)
 
 ## Contributing
 
-Looking for a good place to start contributing? Check out some [`good first issues`](https://github.com/evmos/evmos/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
+Looking for a good place to start contributing?
+Check out some
+[`good first issues`](https://github.com/evmos/evmos/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
 
 For additional instructions, standards and style guides, please refer to the [Contributing](./CONTRIBUTING.md) document.
 
 ## Careers
 
-See our open positions on [Cosmos Jobs](https://jobs.cosmos.network/project/evmos-d0sk1uxuh-remote/), [Notion](https://tharsis.notion.site), or feel free to [reach out](mailto:careers@thars.is) via email.
+See our open positions on [Greenhouse](https://boards.eu.greenhouse.io/evmos).

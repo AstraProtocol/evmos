@@ -1,13 +1,12 @@
 "default": true
 "MD001": false
 "MD004": false
-"MD007": 
+"MD007":
   "indent": 4
-"MD013": false
-"MD024": 
+"MD024":
   "siblings_only": true
 "MD025": false
-"MD026": 
+"MD026":
   "punctuation": ".;:"
 "MD029": false
 "MD033": false
@@ -15,6 +14,11 @@
 "MD036": false
 "MD040": false
 "MD041": false
-"MD049": 
+"MD051": false
+"MD049":
   "style": "asterisk"
+"MD013":
+  "line_length": 120
+  "code_blocks": false
+  "tables": false
 "no-hard-tabs": false

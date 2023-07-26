@@ -6,25 +6,28 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
-	_ "github.com/gogo/protobuf/gogoproto"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ = proto.Marshal
-var _ = fmt.Errorf
-var _ = math.Inf
+var (
+	_ = proto.Marshal
+	_ = fmt.Errorf
+	_ = math.Inf
+)
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -45,9 +48,11 @@ func (*QueryIncentivesRequest) ProtoMessage()    {}
 func (*QueryIncentivesRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{0}
 }
+
 func (m *QueryIncentivesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryIncentivesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryIncentivesRequest.Marshal(b, m, deterministic)
@@ -60,12 +65,15 @@ func (m *QueryIncentivesRequest) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
+
 func (m *QueryIncentivesRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryIncentivesRequest.Merge(m, src)
 }
+
 func (m *QueryIncentivesRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryIncentivesRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryIncentivesRequest.DiscardUnknown(m)
 }
@@ -82,6 +90,7 @@ func (m *QueryIncentivesRequest) GetPagination() *query.PageRequest {
 // QueryIncentivesResponse is the response type for the Query/Incentives RPC
 // method.
 type QueryIncentivesResponse struct {
+	// incentives is a slice of all incentives
 	Incentives []Incentive `protobuf:"bytes,1,rep,name=incentives,proto3" json:"incentives"`
 	// pagination defines the pagination in the response.
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -93,9 +102,11 @@ func (*QueryIncentivesResponse) ProtoMessage()    {}
 func (*QueryIncentivesResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{1}
 }
+
 func (m *QueryIncentivesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryIncentivesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryIncentivesResponse.Marshal(b, m, deterministic)
@@ -108,12 +119,15 @@ func (m *QueryIncentivesResponse) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
+
 func (m *QueryIncentivesResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryIncentivesResponse.Merge(m, src)
 }
+
 func (m *QueryIncentivesResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryIncentivesResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryIncentivesResponse.DiscardUnknown(m)
 }
@@ -136,7 +150,7 @@ func (m *QueryIncentivesResponse) GetPagination() *query.PageResponse {
 
 // QueryIncentiveRequest is the request type for the Query/Incentive RPC method.
 type QueryIncentiveRequest struct {
-	// contract identifier is the hex contract address of a contract
+	// contract is the hex contract address of a incentivized smart contract
 	Contract string `protobuf:"bytes,1,opt,name=contract,proto3" json:"contract,omitempty"`
 }
 
@@ -146,9 +160,11 @@ func (*QueryIncentiveRequest) ProtoMessage()    {}
 func (*QueryIncentiveRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{2}
 }
+
 func (m *QueryIncentiveRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryIncentiveRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryIncentiveRequest.Marshal(b, m, deterministic)
@@ -161,12 +177,15 @@ func (m *QueryIncentiveRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
+
 func (m *QueryIncentiveRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryIncentiveRequest.Merge(m, src)
 }
+
 func (m *QueryIncentiveRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryIncentiveRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryIncentiveRequest.DiscardUnknown(m)
 }
@@ -183,6 +202,7 @@ func (m *QueryIncentiveRequest) GetContract() string {
 // QueryIncentiveResponse is the response type for the Query/Incentive RPC
 // method.
 type QueryIncentiveResponse struct {
+	// incentive is the returned incentive for the queried contract
 	Incentive Incentive `protobuf:"bytes,1,opt,name=incentive,proto3" json:"incentive"`
 }
 
@@ -192,9 +212,11 @@ func (*QueryIncentiveResponse) ProtoMessage()    {}
 func (*QueryIncentiveResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{3}
 }
+
 func (m *QueryIncentiveResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryIncentiveResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryIncentiveResponse.Marshal(b, m, deterministic)
@@ -207,12 +229,15 @@ func (m *QueryIncentiveResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
+
 func (m *QueryIncentiveResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryIncentiveResponse.Merge(m, src)
 }
+
 func (m *QueryIncentiveResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryIncentiveResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryIncentiveResponse.DiscardUnknown(m)
 }
@@ -241,9 +266,11 @@ func (*QueryGasMetersRequest) ProtoMessage()    {}
 func (*QueryGasMetersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{4}
 }
+
 func (m *QueryGasMetersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryGasMetersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryGasMetersRequest.Marshal(b, m, deterministic)
@@ -256,12 +283,15 @@ func (m *QueryGasMetersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
+
 func (m *QueryGasMetersRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryGasMetersRequest.Merge(m, src)
 }
+
 func (m *QueryGasMetersRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryGasMetersRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryGasMetersRequest.DiscardUnknown(m)
 }
@@ -285,6 +315,7 @@ func (m *QueryGasMetersRequest) GetPagination() *query.PageRequest {
 // QueryGasMetersResponse is the response type for the Query/Incentives RPC
 // method.
 type QueryGasMetersResponse struct {
+	// gas_meters is a slice of the gas meters for an incentivized smart contract
 	GasMeters []GasMeter `protobuf:"bytes,1,rep,name=gas_meters,json=gasMeters,proto3" json:"gas_meters"`
 	// pagination defines the pagination in the response.
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -296,9 +327,11 @@ func (*QueryGasMetersResponse) ProtoMessage()    {}
 func (*QueryGasMetersResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{5}
 }
+
 func (m *QueryGasMetersResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryGasMetersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryGasMetersResponse.Marshal(b, m, deterministic)
@@ -311,12 +344,15 @@ func (m *QueryGasMetersResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
+
 func (m *QueryGasMetersResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryGasMetersResponse.Merge(m, src)
 }
+
 func (m *QueryGasMetersResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryGasMetersResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryGasMetersResponse.DiscardUnknown(m)
 }
@@ -339,9 +375,9 @@ func (m *QueryGasMetersResponse) GetPagination() *query.PageResponse {
 
 // QueryGasMeterRequest is the request type for the Query/Incentive RPC method.
 type QueryGasMeterRequest struct {
-	// contract identifier is the hex contract address of a contract
+	// contract is the hex contract address of a contract
 	Contract string `protobuf:"bytes,1,opt,name=contract,proto3" json:"contract,omitempty"`
-	// participant identifier is the hex address of a user
+	// participant is the hex address of a user
 	Participant string `protobuf:"bytes,2,opt,name=participant,proto3" json:"participant,omitempty"`
 }
 
@@ -351,9 +387,11 @@ func (*QueryGasMeterRequest) ProtoMessage()    {}
 func (*QueryGasMeterRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{6}
 }
+
 func (m *QueryGasMeterRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryGasMeterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryGasMeterRequest.Marshal(b, m, deterministic)
@@ -366,12 +404,15 @@ func (m *QueryGasMeterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
+
 func (m *QueryGasMeterRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryGasMeterRequest.Merge(m, src)
 }
+
 func (m *QueryGasMeterRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryGasMeterRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryGasMeterRequest.DiscardUnknown(m)
 }
@@ -395,6 +436,7 @@ func (m *QueryGasMeterRequest) GetParticipant() string {
 // QueryGasMeterResponse is the response type for the Query/Incentive RPC
 // method.
 type QueryGasMeterResponse struct {
+	// gas_meter is a gas meter for one participant on an incentivized smart contract
 	GasMeter uint64 `protobuf:"varint,1,opt,name=gas_meter,json=gasMeter,proto3" json:"gas_meter,omitempty"`
 }
 
@@ -404,9 +446,11 @@ func (*QueryGasMeterResponse) ProtoMessage()    {}
 func (*QueryGasMeterResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{7}
 }
+
 func (m *QueryGasMeterResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryGasMeterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryGasMeterResponse.Marshal(b, m, deterministic)
@@ -419,12 +463,15 @@ func (m *QueryGasMeterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
+
 func (m *QueryGasMeterResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryGasMeterResponse.Merge(m, src)
 }
+
 func (m *QueryGasMeterResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryGasMeterResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryGasMeterResponse.DiscardUnknown(m)
 }
@@ -451,9 +498,11 @@ func (*QueryAllocationMetersRequest) ProtoMessage()    {}
 func (*QueryAllocationMetersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{8}
 }
+
 func (m *QueryAllocationMetersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryAllocationMetersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryAllocationMetersRequest.Marshal(b, m, deterministic)
@@ -466,12 +515,15 @@ func (m *QueryAllocationMetersRequest) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
+
 func (m *QueryAllocationMetersRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryAllocationMetersRequest.Merge(m, src)
 }
+
 func (m *QueryAllocationMetersRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryAllocationMetersRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryAllocationMetersRequest.DiscardUnknown(m)
 }
@@ -488,6 +540,7 @@ func (m *QueryAllocationMetersRequest) GetPagination() *query.PageRequest {
 // QueryAllocationMetersResponse is the response type for the
 // Query/AllocationMeters RPC method.
 type QueryAllocationMetersResponse struct {
+	// allocation_meters is a slice of all allocations
 	AllocationMeters github_com_cosmos_cosmos_sdk_types.DecCoins `protobuf:"bytes,1,rep,name=allocation_meters,json=allocationMeters,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"allocation_meters"`
 	// pagination defines the pagination in the response.
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -499,9 +552,11 @@ func (*QueryAllocationMetersResponse) ProtoMessage()    {}
 func (*QueryAllocationMetersResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{9}
 }
+
 func (m *QueryAllocationMetersResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryAllocationMetersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryAllocationMetersResponse.Marshal(b, m, deterministic)
@@ -514,12 +569,15 @@ func (m *QueryAllocationMetersResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
+
 func (m *QueryAllocationMetersResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryAllocationMetersResponse.Merge(m, src)
 }
+
 func (m *QueryAllocationMetersResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryAllocationMetersResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryAllocationMetersResponse.DiscardUnknown(m)
 }
@@ -553,9 +611,11 @@ func (*QueryAllocationMeterRequest) ProtoMessage()    {}
 func (*QueryAllocationMeterRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{10}
 }
+
 func (m *QueryAllocationMeterRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryAllocationMeterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryAllocationMeterRequest.Marshal(b, m, deterministic)
@@ -568,12 +628,15 @@ func (m *QueryAllocationMeterRequest) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
+
 func (m *QueryAllocationMeterRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryAllocationMeterRequest.Merge(m, src)
 }
+
 func (m *QueryAllocationMeterRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryAllocationMeterRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryAllocationMeterRequest.DiscardUnknown(m)
 }
@@ -590,6 +653,7 @@ func (m *QueryAllocationMeterRequest) GetDenom() string {
 // QueryAllocationMeterResponse is the response type for the
 // Query/AllocationMeter RPC method.
 type QueryAllocationMeterResponse struct {
+	// allocation_meter defines the allocation of the queried denom
 	AllocationMeter types.DecCoin `protobuf:"bytes,1,opt,name=allocation_meter,json=allocationMeter,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"allocation_meter"`
 }
 
@@ -599,9 +663,11 @@ func (*QueryAllocationMeterResponse) ProtoMessage()    {}
 func (*QueryAllocationMeterResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{11}
 }
+
 func (m *QueryAllocationMeterResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryAllocationMeterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryAllocationMeterResponse.Marshal(b, m, deterministic)
@@ -614,12 +680,15 @@ func (m *QueryAllocationMeterResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
+
 func (m *QueryAllocationMeterResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryAllocationMeterResponse.Merge(m, src)
 }
+
 func (m *QueryAllocationMeterResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryAllocationMeterResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryAllocationMeterResponse.DiscardUnknown(m)
 }
@@ -634,8 +703,7 @@ func (m *QueryAllocationMeterResponse) GetAllocationMeter() types.DecCoin {
 }
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
-type QueryParamsRequest struct {
-}
+type QueryParamsRequest struct{}
 
 func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
 func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
@@ -643,9 +711,11 @@ func (*QueryParamsRequest) ProtoMessage()    {}
 func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{12}
 }
+
 func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryParamsRequest.Marshal(b, m, deterministic)
@@ -658,12 +728,15 @@ func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
+
 func (m *QueryParamsRequest) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryParamsRequest.Merge(m, src)
 }
+
 func (m *QueryParamsRequest) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryParamsRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryParamsRequest.DiscardUnknown(m)
 }
@@ -673,6 +746,7 @@ var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
 // QueryParamsResponse is the response type for the Query/Params RPC
 // method.
 type QueryParamsResponse struct {
+	// params are the incentives module parameters
 	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
@@ -682,9 +756,11 @@ func (*QueryParamsResponse) ProtoMessage()    {}
 func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_ee5d2766935e7631, []int{13}
 }
+
 func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
+
 func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
 		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
@@ -697,12 +773,15 @@ func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
+
 func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
 }
+
 func (m *QueryParamsResponse) XXX_Size() int {
 	return m.Size()
 }
+
 func (m *QueryParamsResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
 }
@@ -736,65 +815,67 @@ func init() {
 func init() { proto.RegisterFile("evmos/incentives/v1/query.proto", fileDescriptor_ee5d2766935e7631) }
 
 var fileDescriptor_ee5d2766935e7631 = []byte{
-	// 841 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x96, 0x4f, 0x4f, 0x13, 0x4d,
-	0x1c, 0xc7, 0x3b, 0x3c, 0x40, 0xda, 0xe1, 0x00, 0xcf, 0xd0, 0xe7, 0x79, 0x48, 0x0b, 0x5b, 0xd8,
-	0xc7, 0x40, 0x2d, 0xb8, 0x4b, 0x8b, 0x1a, 0xf5, 0xa4, 0x95, 0x88, 0x1e, 0x4c, 0xb0, 0xf1, 0x64,
-	0x4c, 0x74, 0xba, 0x8c, 0xcb, 0x46, 0xba, 0xb3, 0x74, 0x96, 0x46, 0x52, 0x31, 0xc6, 0x57, 0x40,
-	0xe2, 0xc5, 0x83, 0x37, 0x63, 0xa2, 0x1e, 0x7c, 0x1d, 0x1c, 0x49, 0x4c, 0x8c, 0x27, 0x35, 0xe0,
-	0xc1, 0x97, 0x61, 0x3a, 0x3b, 0xb3, 0xdd, 0x5d, 0xb6, 0x74, 0x31, 0x78, 0xa2, 0x9d, 0xfd, 0xfd,
-	0xf9, 0x7c, 0x7f, 0x3f, 0xe6, 0xbb, 0x85, 0x05, 0xd2, 0x6a, 0x50, 0xa6, 0x5b, 0xb6, 0x41, 0x6c,
-	0xd7, 0x6a, 0x11, 0xa6, 0xb7, 0xca, 0xfa, 0xe6, 0x16, 0x69, 0x6e, 0x6b, 0x4e, 0x93, 0xba, 0x14,
-	0x8d, 0xf3, 0x00, 0xad, 0x1b, 0xa0, 0xb5, 0xca, 0xb9, 0x92, 0x41, 0x59, 0x27, 0xad, 0x8e, 0x19,
-	0xf1, 0xa2, 0xf5, 0x56, 0xb9, 0x4e, 0x5c, 0x5c, 0xd6, 0x1d, 0x6c, 0x5a, 0x36, 0x76, 0x2d, 0x6a,
-	0x7b, 0x05, 0x72, 0x4a, 0x30, 0x56, 0x46, 0x19, 0xd4, 0x92, 0xcf, 0x67, 0xe2, 0x08, 0x4c, 0x62,
-	0x13, 0x66, 0x31, 0x11, 0x72, 0x26, 0x2e, 0x24, 0x40, 0xe4, 0x45, 0x4d, 0x9a, 0x94, 0x9a, 0x1b,
-	0x44, 0xc7, 0x8e, 0xa5, 0x63, 0xdb, 0xa6, 0x2e, 0xa7, 0x90, 0x4f, 0xb3, 0x26, 0x35, 0x29, 0xff,
-	0xa8, 0x77, 0x3e, 0x79, 0xa7, 0xea, 0x43, 0xf8, 0xef, 0x9d, 0x0e, 0xfe, 0x2d, 0xbf, 0x58, 0x8d,
-	0x6c, 0x6e, 0x11, 0xe6, 0xa2, 0x1b, 0x10, 0x76, 0xa5, 0x4c, 0x80, 0x69, 0x50, 0x1c, 0xa9, 0xcc,
-	0x6a, 0x9e, 0x16, 0xad, 0xa3, 0x45, 0xf3, 0xa6, 0x24, 0x14, 0x69, 0xab, 0xd8, 0x24, 0x22, 0xb7,
-	0x16, 0xc8, 0x54, 0xdf, 0x01, 0xf8, 0xdf, 0x91, 0x16, 0xcc, 0xa1, 0x36, 0x23, 0x68, 0x19, 0xc2,
-	0xae, 0x8a, 0x09, 0x30, 0xfd, 0x57, 0x71, 0xa4, 0xa2, 0x68, 0x31, 0x03, 0xd7, 0xfc, 0xe4, 0xea,
-	0xe0, 0xde, 0xd7, 0x42, 0xaa, 0x16, 0xc8, 0x43, 0x2b, 0x21, 0xd2, 0x01, 0x4e, 0x3a, 0xd7, 0x97,
-	0xd4, 0x43, 0x08, 0xa1, 0x2e, 0xc1, 0x7f, 0xc2, 0xa4, 0x72, 0x16, 0x39, 0x98, 0x36, 0xa8, 0xed,
-	0x36, 0xb1, 0xe1, 0xf2, 0x49, 0x64, 0x6a, 0xfe, 0x77, 0xf5, 0x7e, 0x74, 0x82, 0xbe, 0xba, 0x2a,
-	0xcc, 0xf8, 0x94, 0x62, 0x80, 0xc9, 0xc4, 0x75, 0xd3, 0xd4, 0xb6, 0x40, 0x5a, 0xc1, 0xec, 0x36,
-	0x71, 0x49, 0x93, 0x25, 0x40, 0x8a, 0xac, 0x6e, 0xe0, 0xb7, 0x57, 0xf7, 0x16, 0x08, 0x6d, 0x81,
-	0xee, 0xbe, 0x36, 0x68, 0x62, 0xf6, 0xa0, 0xc1, 0x4f, 0xc5, 0xe6, 0xa6, 0x62, 0xc5, 0xc9, 0x5c,
-	0xa9, 0xcd, 0x94, 0xb5, 0x4e, 0x6f, 0x6f, 0x77, 0x61, 0x36, 0x84, 0x99, 0x64, 0x46, 0xd3, 0x70,
-	0xc4, 0xc1, 0x4d, 0xd7, 0x32, 0x2c, 0x07, 0xdb, 0x2e, 0xef, 0x9e, 0xa9, 0x05, 0x8f, 0xd4, 0xf3,
-	0x91, 0xd1, 0xfb, 0xda, 0xf3, 0x30, 0xe3, 0x6b, 0xe7, 0x75, 0x07, 0x6b, 0x69, 0xa9, 0x4a, 0x7d,
-	0x04, 0x27, 0x79, 0xd6, 0xb5, 0x8d, 0x0d, 0x6a, 0x70, 0xbc, 0xf0, 0xde, 0x4e, 0xeb, 0x5a, 0xfd,
-	0x04, 0x70, 0xaa, 0x47, 0x23, 0x81, 0xf9, 0x0c, 0xfe, 0x8d, 0xfd, 0x67, 0xe1, 0x4d, 0x4d, 0x86,
-	0x1a, 0xca, 0x56, 0xcb, 0xc4, 0xb8, 0x4e, 0x2d, 0xbb, 0xba, 0xd4, 0x59, 0xd4, 0x87, 0x6f, 0x85,
-	0x79, 0xd3, 0x72, 0xd7, 0xb7, 0xea, 0x9a, 0x41, 0x1b, 0xba, 0xf0, 0x30, 0xef, 0xcf, 0x39, 0xb6,
-	0xf6, 0x58, 0x77, 0xb7, 0x1d, 0xc2, 0x64, 0x0e, 0xab, 0x8d, 0xe1, 0x08, 0xc7, 0x69, 0x5e, 0xcb,
-	0x7c, 0x9c, 0x52, 0x39, 0xd1, 0x2c, 0x1c, 0x5a, 0x23, 0x36, 0x6d, 0x88, 0x15, 0x7b, 0x5f, 0xd4,
-	0xd7, 0x20, 0x7e, 0x11, 0xfe, 0x78, 0x9e, 0xc2, 0xb1, 0xe8, 0x78, 0xc4, 0x3a, 0xfe, 0xc0, 0x74,
-	0x46, 0x23, 0xd3, 0x51, 0xb3, 0x10, 0x71, 0xba, 0x55, 0xdc, 0xc4, 0x0d, 0xf9, 0xcf, 0xa1, 0xae,
-	0xc2, 0xf1, 0xd0, 0xa9, 0x40, 0xbd, 0x0c, 0x87, 0x1d, 0x7e, 0x22, 0x00, 0xf3, 0xb1, 0x17, 0xcd,
-	0x4b, 0x12, 0xd7, 0x4c, 0x24, 0x54, 0x3e, 0xa7, 0xe1, 0x10, 0x2f, 0x89, 0x76, 0x01, 0x84, 0x5d,
-	0x0b, 0x46, 0xf3, 0xb1, 0x35, 0xe2, 0xdf, 0x05, 0xb9, 0x85, 0x64, 0xc1, 0x1e, 0xae, 0x3a, 0xf7,
-	0xe2, 0xd3, 0x8f, 0x97, 0x03, 0x33, 0xa8, 0xa0, 0x1f, 0xff, 0xda, 0x42, 0xaf, 0x00, 0xcc, 0xf8,
-	0xf9, 0xa8, 0x94, 0xa0, 0x89, 0x04, 0x9a, 0x4f, 0x14, 0x2b, 0x78, 0x2a, 0x9c, 0x67, 0x01, 0x95,
-	0xfa, 0xf0, 0xe8, 0x6d, 0xe9, 0x0e, 0x3b, 0x1c, 0xcd, 0x77, 0xbd, 0xe3, 0xd0, 0xa2, 0xc6, 0x7c,
-	0x1c, 0xda, 0x11, 0x1b, 0xed, 0x83, 0xd6, 0x75, 0xd8, 0x20, 0xda, 0x1b, 0x00, 0xd3, 0xb2, 0x12,
-	0x3a, 0xdb, 0xbf, 0x9b, 0x04, 0x2b, 0x25, 0x09, 0x15, 0x5c, 0x57, 0x39, 0xd7, 0x15, 0x74, 0x29,
-	0x39, 0x97, 0xde, 0x0e, 0x98, 0xe7, 0x0e, 0x7a, 0x0f, 0xe0, 0x58, 0xd4, 0x9a, 0x50, 0xb9, 0x37,
-	0x42, 0x0f, 0xbf, 0xcc, 0x55, 0x4e, 0x92, 0x22, 0xe8, 0x35, 0x4e, 0x5f, 0x44, 0xb3, 0xb1, 0xf4,
-	0x47, 0x4c, 0x11, 0x7d, 0x04, 0x70, 0x34, 0x52, 0x0c, 0x2d, 0x26, 0xee, 0x2b, 0x49, 0xcb, 0x27,
-	0xc8, 0x10, 0xa0, 0x17, 0x39, 0xe8, 0x22, 0xd2, 0x92, 0x81, 0xea, 0x6d, 0xee, 0x6d, 0x3b, 0xe8,
-	0x39, 0x80, 0xc3, 0xde, 0x75, 0x47, 0x73, 0xbd, 0xbb, 0x86, 0xbc, 0x25, 0x57, 0xec, 0x1f, 0x28,
-	0xa8, 0xfe, 0xe7, 0x54, 0x53, 0x28, 0x1f, 0x4b, 0xe5, 0x19, 0x4b, 0xf5, 0xe6, 0xde, 0x81, 0x02,
-	0xf6, 0x0f, 0x14, 0xf0, 0xfd, 0x40, 0x01, 0xbb, 0x87, 0x4a, 0x6a, 0xff, 0x50, 0x49, 0x7d, 0x39,
-	0x54, 0x52, 0xf7, 0xb4, 0x80, 0x31, 0xba, 0xeb, 0xb8, 0xc9, 0x2c, 0x26, 0x0a, 0xb5, 0x2e, 0xe8,
-	0x4f, 0x82, 0xd5, 0xb8, 0x49, 0xd6, 0x87, 0xf9, 0x2f, 0xd1, 0xa5, 0x5f, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x30, 0x17, 0x72, 0x5d, 0x8a, 0x0b, 0x00, 0x00,
+	// 836 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x96, 0x4f, 0x4f, 0x13, 0x4f,
+	0x18, 0xc7, 0x3b, 0xfc, 0x80, 0xb4, 0xc3, 0x01, 0x7e, 0x43, 0x55, 0xd2, 0xc2, 0x16, 0x56, 0x03,
+	0xb5, 0xc0, 0x2e, 0x2d, 0xc6, 0xa8, 0x27, 0xad, 0x44, 0xe2, 0xc1, 0x04, 0x1b, 0x4f, 0xc6, 0x44,
+	0xa7, 0xcb, 0xb8, 0x6e, 0xa4, 0x3b, 0x4b, 0x67, 0x69, 0x24, 0x15, 0x63, 0x7c, 0x05, 0x24, 0x5e,
+	0x3c, 0x78, 0x33, 0x26, 0xea, 0xc1, 0xd7, 0xc1, 0x91, 0xc4, 0xc4, 0x78, 0x52, 0x03, 0x1e, 0x7c,
+	0x19, 0xa6, 0xb3, 0x33, 0xdb, 0xdd, 0x65, 0x4b, 0x17, 0x83, 0x17, 0x68, 0x67, 0x9f, 0x3f, 0x9f,
+	0xef, 0xf3, 0x30, 0xdf, 0x05, 0x16, 0x48, 0xab, 0x41, 0x99, 0x6e, 0xd9, 0x06, 0xb1, 0x5d, 0xab,
+	0x45, 0x98, 0xde, 0x2a, 0xeb, 0x9b, 0x5b, 0xa4, 0xb9, 0xad, 0x39, 0x4d, 0xea, 0x52, 0x34, 0xce,
+	0x03, 0xb4, 0x6e, 0x80, 0xd6, 0x2a, 0xe7, 0x4a, 0x06, 0x65, 0x9d, 0xb4, 0x3a, 0x66, 0xc4, 0x8b,
+	0xd6, 0x5b, 0xe5, 0x3a, 0x71, 0x71, 0x59, 0x77, 0xb0, 0x69, 0xd9, 0xd8, 0xb5, 0xa8, 0xed, 0x15,
+	0xc8, 0x29, 0xc1, 0x58, 0x19, 0x65, 0x50, 0x4b, 0x3e, 0x9f, 0x89, 0x23, 0x30, 0x89, 0x4d, 0x98,
+	0xc5, 0x44, 0xc8, 0x85, 0xb8, 0x90, 0x00, 0x91, 0x17, 0x95, 0x35, 0xa9, 0x49, 0xf9, 0x47, 0xbd,
+	0xf3, 0x49, 0x9c, 0x4e, 0x9a, 0x94, 0x9a, 0x1b, 0x44, 0xc7, 0x8e, 0xa5, 0x63, 0xdb, 0xa6, 0x2e,
+	0x67, 0x13, 0x39, 0xea, 0x23, 0x78, 0xf6, 0x6e, 0x07, 0xff, 0xb6, 0x5f, 0xac, 0x46, 0x36, 0xb7,
+	0x08, 0x73, 0xd1, 0x2d, 0x08, 0xbb, 0x52, 0x26, 0xc0, 0x34, 0x28, 0x8e, 0x54, 0x66, 0x35, 0x4f,
+	0x8b, 0xd6, 0xd1, 0xa2, 0x79, 0x53, 0x12, 0x8a, 0xb4, 0x35, 0x6c, 0x12, 0x91, 0x5b, 0x0b, 0x64,
+	0xaa, 0x1f, 0x00, 0x3c, 0x77, 0xa4, 0x05, 0x73, 0xa8, 0xcd, 0x08, 0x5a, 0x81, 0xb0, 0xab, 0x62,
+	0x02, 0x4c, 0xff, 0x57, 0x1c, 0xa9, 0x28, 0x5a, 0xcc, 0xc0, 0x35, 0x3f, 0xb9, 0x3a, 0xb8, 0xf7,
+	0xbd, 0x90, 0xaa, 0x05, 0xf2, 0xd0, 0x6a, 0x88, 0x74, 0x80, 0x93, 0xce, 0xf5, 0x25, 0xf5, 0x10,
+	0x42, 0xa8, 0xcb, 0xf0, 0x4c, 0x98, 0x54, 0xce, 0x22, 0x07, 0xd3, 0x06, 0xb5, 0xdd, 0x26, 0x36,
+	0x5c, 0x3e, 0x89, 0x4c, 0xcd, 0xff, 0xae, 0x3e, 0x88, 0x4e, 0xd0, 0x57, 0x57, 0x85, 0x19, 0x9f,
+	0x52, 0x0c, 0x30, 0x99, 0xb8, 0x6e, 0x9a, 0xda, 0x16, 0x48, 0xab, 0x98, 0xdd, 0x21, 0x2e, 0x69,
+	0xb2, 0x04, 0x48, 0x91, 0xd5, 0x0d, 0xfc, 0xf5, 0xea, 0xde, 0x03, 0xa1, 0x2d, 0xd0, 0xdd, 0xd7,
+	0x06, 0x4d, 0xcc, 0x1e, 0x36, 0xf8, 0xa9, 0xd8, 0xdc, 0x54, 0xac, 0x38, 0x99, 0x2b, 0xb5, 0x99,
+	0xb2, 0xd6, 0xe9, 0xed, 0xed, 0x1e, 0xcc, 0x86, 0x30, 0x93, 0xcc, 0x68, 0x1a, 0x8e, 0x38, 0xb8,
+	0xe9, 0x5a, 0x86, 0xe5, 0x60, 0xdb, 0xe5, 0xdd, 0x33, 0xb5, 0xe0, 0x91, 0x7a, 0x29, 0x32, 0x7a,
+	0x5f, 0x7b, 0x1e, 0x66, 0x7c, 0xed, 0xbc, 0xee, 0x60, 0x2d, 0x2d, 0x55, 0xa9, 0x8f, 0xe1, 0x24,
+	0xcf, 0xba, 0xb1, 0xb1, 0x41, 0x0d, 0x8e, 0x17, 0xde, 0xdb, 0x69, 0x5d, 0xab, 0xdf, 0x00, 0x4e,
+	0xf5, 0x68, 0x24, 0x30, 0x5f, 0xc0, 0xff, 0xb1, 0xff, 0x2c, 0xbc, 0xa9, 0xc9, 0x50, 0x43, 0xd9,
+	0x6a, 0x85, 0x18, 0x37, 0xa9, 0x65, 0x57, 0x97, 0x3b, 0x8b, 0xfa, 0xf4, 0xa3, 0x30, 0x6f, 0x5a,
+	0xee, 0x93, 0xad, 0xba, 0x66, 0xd0, 0x86, 0x2e, 0x3c, 0xcc, 0xfb, 0xb5, 0xc8, 0xd6, 0x9f, 0xea,
+	0xee, 0xb6, 0x43, 0x98, 0xcc, 0x61, 0xb5, 0x31, 0x1c, 0xe1, 0x38, 0xcd, 0x6b, 0x99, 0x8f, 0x53,
+	0x2a, 0x27, 0x9a, 0x85, 0x43, 0xeb, 0xc4, 0xa6, 0x0d, 0xb1, 0x62, 0xef, 0x8b, 0xfa, 0x16, 0xc4,
+	0x2f, 0xc2, 0x1f, 0xcf, 0x73, 0x38, 0x16, 0x1d, 0x8f, 0x58, 0xc7, 0x3f, 0x98, 0xce, 0x68, 0x64,
+	0x3a, 0x6a, 0x16, 0x22, 0x4e, 0xb7, 0x86, 0x9b, 0xb8, 0x21, 0xff, 0x38, 0xd4, 0x35, 0x38, 0x1e,
+	0x3a, 0x15, 0xa8, 0x57, 0xe1, 0xb0, 0xc3, 0x4f, 0x04, 0x60, 0x3e, 0xf6, 0xa2, 0x79, 0x49, 0xe2,
+	0x9a, 0x89, 0x84, 0xca, 0xd7, 0x34, 0x1c, 0xe2, 0x25, 0xd1, 0x2e, 0x80, 0xb0, 0x6b, 0xc1, 0x68,
+	0x3e, 0xb6, 0x46, 0xfc, 0xbb, 0x20, 0xb7, 0x90, 0x2c, 0xd8, 0xc3, 0x55, 0xe7, 0x5e, 0x7d, 0xf9,
+	0xf5, 0x7a, 0x60, 0x06, 0x15, 0xf4, 0xe3, 0x5f, 0x5b, 0xe8, 0x0d, 0x80, 0x19, 0x3f, 0x1f, 0x95,
+	0x12, 0x34, 0x91, 0x40, 0xf3, 0x89, 0x62, 0x05, 0x4f, 0x85, 0xf3, 0x2c, 0xa0, 0x52, 0x1f, 0x1e,
+	0xbd, 0x2d, 0xdd, 0x61, 0x87, 0xa3, 0xf9, 0xae, 0x77, 0x1c, 0x5a, 0xd4, 0x98, 0x8f, 0x43, 0x3b,
+	0x62, 0xa3, 0x7d, 0xd0, 0xba, 0x0e, 0x1b, 0x44, 0x7b, 0x07, 0x60, 0x5a, 0x56, 0x42, 0x17, 0xfb,
+	0x77, 0x93, 0x60, 0xa5, 0x24, 0xa1, 0x82, 0xeb, 0x3a, 0xe7, 0xba, 0x86, 0xae, 0x24, 0xe7, 0xd2,
+	0xdb, 0x01, 0xf3, 0xdc, 0x41, 0x1f, 0x01, 0x1c, 0x8b, 0x5a, 0x13, 0x2a, 0xf7, 0x46, 0xe8, 0xe1,
+	0x97, 0xb9, 0xca, 0x49, 0x52, 0x04, 0xbd, 0xc6, 0xe9, 0x8b, 0x68, 0x36, 0x96, 0xfe, 0x88, 0x29,
+	0xa2, 0xcf, 0x00, 0x8e, 0x46, 0x8a, 0xa1, 0xa5, 0xc4, 0x7d, 0x25, 0x69, 0xf9, 0x04, 0x19, 0x02,
+	0xf4, 0x32, 0x07, 0x5d, 0x42, 0x5a, 0x32, 0x50, 0xbd, 0xcd, 0xbd, 0x6d, 0x07, 0xbd, 0x04, 0x70,
+	0xd8, 0xbb, 0xee, 0x68, 0xae, 0x77, 0xd7, 0x90, 0xb7, 0xe4, 0x8a, 0xfd, 0x03, 0x05, 0xd5, 0x79,
+	0x4e, 0x35, 0x85, 0xf2, 0xb1, 0x54, 0x9e, 0xb1, 0x54, 0x57, 0xf7, 0x0e, 0x14, 0xb0, 0x7f, 0xa0,
+	0x80, 0x9f, 0x07, 0x0a, 0xd8, 0x3d, 0x54, 0x52, 0xfb, 0x87, 0x4a, 0xea, 0xdb, 0xa1, 0x92, 0xba,
+	0xbf, 0x18, 0x30, 0x46, 0xaf, 0x80, 0xf7, 0xb3, 0x55, 0x5e, 0xd2, 0x9f, 0x05, 0x8b, 0x71, 0x8f,
+	0xac, 0x0f, 0xf3, 0x7f, 0x44, 0x97, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0xd6, 0xfc, 0x0d, 0x20,
+	0x89, 0x0b, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
+var (
+	_ context.Context
+	_ grpc.ClientConn
+)
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
@@ -810,12 +891,12 @@ type QueryClient interface {
 	Incentive(ctx context.Context, in *QueryIncentiveRequest, opts ...grpc.CallOption) (*QueryIncentiveResponse, error)
 	// GasMeters retrieves active gas meters for a given contract
 	GasMeters(ctx context.Context, in *QueryGasMetersRequest, opts ...grpc.CallOption) (*QueryGasMetersResponse, error)
-	// GasMeter Retrieves a active gas meter
+	// GasMeter retrieves a active gas meter
 	GasMeter(ctx context.Context, in *QueryGasMeterRequest, opts ...grpc.CallOption) (*QueryGasMeterResponse, error)
 	// AllocationMeters retrieves active allocation meters for a given
 	// denomination
 	AllocationMeters(ctx context.Context, in *QueryAllocationMetersRequest, opts ...grpc.CallOption) (*QueryAllocationMetersResponse, error)
-	// AllocationMeter Retrieves a active gas meter
+	// AllocationMeter retrieves a active gas meter
 	AllocationMeter(ctx context.Context, in *QueryAllocationMeterRequest, opts ...grpc.CallOption) (*QueryAllocationMeterResponse, error)
 	// Params retrieves the incentives module params
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
@@ -900,39 +981,44 @@ type QueryServer interface {
 	Incentive(context.Context, *QueryIncentiveRequest) (*QueryIncentiveResponse, error)
 	// GasMeters retrieves active gas meters for a given contract
 	GasMeters(context.Context, *QueryGasMetersRequest) (*QueryGasMetersResponse, error)
-	// GasMeter Retrieves a active gas meter
+	// GasMeter retrieves a active gas meter
 	GasMeter(context.Context, *QueryGasMeterRequest) (*QueryGasMeterResponse, error)
 	// AllocationMeters retrieves active allocation meters for a given
 	// denomination
 	AllocationMeters(context.Context, *QueryAllocationMetersRequest) (*QueryAllocationMetersResponse, error)
-	// AllocationMeter Retrieves a active gas meter
+	// AllocationMeter retrieves a active gas meter
 	AllocationMeter(context.Context, *QueryAllocationMeterRequest) (*QueryAllocationMeterResponse, error)
 	// Params retrieves the incentives module params
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
-type UnimplementedQueryServer struct {
-}
+type UnimplementedQueryServer struct{}
 
 func (*UnimplementedQueryServer) Incentives(ctx context.Context, req *QueryIncentivesRequest) (*QueryIncentivesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Incentives not implemented")
 }
+
 func (*UnimplementedQueryServer) Incentive(ctx context.Context, req *QueryIncentiveRequest) (*QueryIncentiveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Incentive not implemented")
 }
+
 func (*UnimplementedQueryServer) GasMeters(ctx context.Context, req *QueryGasMetersRequest) (*QueryGasMetersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GasMeters not implemented")
 }
+
 func (*UnimplementedQueryServer) GasMeter(ctx context.Context, req *QueryGasMeterRequest) (*QueryGasMeterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GasMeter not implemented")
 }
+
 func (*UnimplementedQueryServer) AllocationMeters(ctx context.Context, req *QueryAllocationMetersRequest) (*QueryAllocationMetersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllocationMeters not implemented")
 }
+
 func (*UnimplementedQueryServer) AllocationMeter(ctx context.Context, req *QueryAllocationMeterRequest) (*QueryAllocationMeterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllocationMeter not implemented")
 }
+
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
@@ -1621,6 +1707,7 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+
 func (m *QueryIncentivesRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1821,9 +1908,11 @@ func (m *QueryParamsResponse) Size() (n int) {
 func sovQuery(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
+
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
+
 func (m *QueryIncentivesRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1910,6 +1999,7 @@ func (m *QueryIncentivesRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryIncentivesResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2030,6 +2120,7 @@ func (m *QueryIncentivesResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryIncentiveRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2112,6 +2203,7 @@ func (m *QueryIncentiveRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryIncentiveResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2195,6 +2287,7 @@ func (m *QueryIncentiveResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryGasMetersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2313,6 +2406,7 @@ func (m *QueryGasMetersRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryGasMetersResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2433,6 +2527,7 @@ func (m *QueryGasMetersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryGasMeterRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2547,6 +2642,7 @@ func (m *QueryGasMeterRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryGasMeterResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2616,6 +2712,7 @@ func (m *QueryGasMeterResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryAllocationMetersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2702,6 +2799,7 @@ func (m *QueryAllocationMetersRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryAllocationMetersResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2822,6 +2920,7 @@ func (m *QueryAllocationMetersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryAllocationMeterRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2904,6 +3003,7 @@ func (m *QueryAllocationMeterRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryAllocationMeterResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2987,6 +3087,7 @@ func (m *QueryAllocationMeterResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3037,6 +3138,7 @@ func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3120,6 +3222,7 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
 func skipQuery(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

@@ -10,24 +10,13 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/evmos/ethermint/tests"
-	ethermint "github.com/evmos/ethermint/types"
-	evm "github.com/evmos/ethermint/x/evm/types"
-
-	"github.com/evmos/evmos/v6/testutil"
-	"github.com/evmos/evmos/v6/x/incentives/types"
-	vestingtypes "github.com/evmos/evmos/v6/x/vesting/types"
+	"github.com/evmos/evmos/v12/testutil"
+	utiltx "github.com/evmos/evmos/v12/testutil/tx"
+	evmostypes "github.com/evmos/evmos/v12/types"
+	evm "github.com/evmos/evmos/v12/x/evm/types"
+	"github.com/evmos/evmos/v12/x/incentives/types"
+	vestingtypes "github.com/evmos/evmos/v12/x/vesting/types"
 )
-
-// ensureHooksSet tries to set the hooks on EVMKeeper, this will fail if the
-// incentives hook is already set
-func (suite *KeeperTestSuite) ensureHooksSet() {
-	defer func() {
-		err := recover()
-		suite.Require().NotNil(err)
-	}()
-	suite.app.EvmKeeper.SetHooks(suite.app.IncentivesKeeper.Hooks())
-}
 
 func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 	var expGasUsed uint64
@@ -43,7 +32,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 			func(_ common.Address) {
 				params := types.DefaultParams()
 				params.EnableIncentives = false
-				suite.app.IncentivesKeeper.SetParams(suite.ctx, params)
+				suite.app.IncentivesKeeper.SetParams(suite.ctx, params) //nolint:errcheck
 			},
 			false,
 		},
@@ -51,7 +40,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 			"from address is not an EOA",
 			func(contractAddr common.Address) {
 				// set a contract account for the address
-				contract := &ethermint.EthAccount{
+				contract := &evmostypes.EthAccount{
 					BaseAccount: authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
 					CodeHash:    common.BytesToHash(crypto.Keccak256([]byte{0, 1, 2, 2})).String(),
 				}
@@ -65,7 +54,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 		{
 			"correct execution - one tx",
 			func(contractAddr common.Address) {
-				acc := &ethermint.EthAccount{
+				acc := &evmostypes.EthAccount{
 					BaseAccount: authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
 					CodeHash:    common.BytesToHash(crypto.Keccak256(nil)).String(),
 				}
@@ -105,7 +94,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 		{
 			"correct execution - two tx",
 			func(contractAddr common.Address) {
-				acc := &ethermint.EthAccount{
+				acc := &evmostypes.EthAccount{
 					BaseAccount: authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
 					CodeHash:    common.BytesToHash(crypto.Keccak256(nil)).String(),
 				}
@@ -120,7 +109,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 		{
 			"tx with non-incentivized contract",
 			func(_ common.Address) {
-				_ = suite.MintERC20Token(tests.GenerateAddress(), suite.address, suite.address, big.NewInt(1000))
+				_ = suite.MintERC20Token(utiltx.GenerateAddress(), suite.address, suite.address, big.NewInt(1000))
 			},
 			false,
 		},
@@ -147,7 +136,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 
 			// Mint coins to pay gas fee
 			coins := sdk.NewCoins(sdk.NewCoin(evm.DefaultEVMDenom, sdk.NewInt(30000000)))
-			err = testutil.FundAccount(suite.app.BankKeeper, suite.ctx, sdk.AccAddress(suite.address.Bytes()), coins)
+			err = testutil.FundAccount(suite.ctx, suite.app.BankKeeper, sdk.AccAddress(suite.address.Bytes()), coins)
 			suite.Require().NoError(err)
 
 			// Submit tx
