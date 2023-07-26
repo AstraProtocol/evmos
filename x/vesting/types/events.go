@@ -24,7 +24,6 @@ const (
 
 	AttributeKeyCoins       = "coins"
 	AttributeKeyStartTime   = "start_time"
-	AttributeKeyMerge       = "merge"
 	AttributeKeyAccount     = "account"
 	AttributeKeyFunder      = "funder"
 	AttributeKeyNewFunder   = "new_funder"

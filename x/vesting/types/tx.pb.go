@@ -49,12 +49,6 @@ type MsgCreateClawbackVestingAccount struct {
 	LockupPeriods github_com_cosmos_cosmos_sdk_x_auth_vesting_types.Periods `protobuf:"bytes,4,rep,name=lockup_periods,json=lockupPeriods,proto3,castrepeated=github.com/cosmos/cosmos-sdk/x/auth/vesting/types.Periods" json:"lockup_periods"`
 	// vesting_periods defines the vesting schedule relative to the start_time
 	VestingPeriods github_com_cosmos_cosmos_sdk_x_auth_vesting_types.Periods `protobuf:"bytes,5,rep,name=vesting_periods,json=vestingPeriods,proto3,castrepeated=github.com/cosmos/cosmos-sdk/x/auth/vesting/types.Periods" json:"vesting_periods"`
-	// merge specifies a the creation mechanism for existing
-	// ClawbackVestingAccounts. If true, merge this new grant into an existing
-	// ClawbackVestingAccount, or create it if it does not exist. If false,
-	// creates a new account. New grants to an existing account must be from the
-	// same from_address.
-	Merge bool `protobuf:"varint,6,opt,name=merge,proto3" json:"merge,omitempty"`
 }
 
 func (m *MsgCreateClawbackVestingAccount) Reset()         { *m = MsgCreateClawbackVestingAccount{} }
@@ -123,13 +117,6 @@ func (m *MsgCreateClawbackVestingAccount) GetVestingPeriods() github_com_cosmos_
 		return m.VestingPeriods
 	}
 	return nil
-}
-
-func (m *MsgCreateClawbackVestingAccount) GetMerge() bool {
-	if m != nil {
-		return m.Merge
-	}
-	return false
 }
 
 // MsgCreateClawbackVestingAccountResponse defines the
@@ -745,16 +732,6 @@ func (m *MsgCreateClawbackVestingAccount) MarshalToSizedBuffer(dAtA []byte) (int
 	_ = i
 	var l int
 	_ = l
-	if m.Merge {
-		i--
-		if m.Merge {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x30
-	}
 	if len(m.VestingPeriods) > 0 {
 		for iNdEx := len(m.VestingPeriods) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -1057,9 +1034,6 @@ func (m *MsgCreateClawbackVestingAccount) Size() (n int) {
 			n += 1 + l + sovTx(uint64(l))
 		}
 	}
-	if m.Merge {
-		n += 2
-	}
 	return n
 }
 
@@ -1354,26 +1328,6 @@ func (m *MsgCreateClawbackVestingAccount) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Merge", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Merge = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])

@@ -18,7 +18,6 @@ package keeper
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	evmostypes "github.com/evmos/evmos/v12/types"
@@ -154,7 +153,6 @@ func (k Keeper) CreateClawbackVestingAccount(
 				sdk.NewAttribute(sdk.AttributeKeySender, msg.FromAddress),
 				sdk.NewAttribute(types.AttributeKeyCoins, vestingCoins.String()),
 				sdk.NewAttribute(types.AttributeKeyStartTime, msg.StartTime.String()),
-				sdk.NewAttribute(types.AttributeKeyMerge, strconv.FormatBool(msg.Merge)),
 				sdk.NewAttribute(types.AttributeKeyAccount, msg.ToAddress),
 			),
 		},
