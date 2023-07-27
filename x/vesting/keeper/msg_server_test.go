@@ -197,6 +197,7 @@ func (suite *KeeperTestSuite) TestMsgCreateClawbackVestingAccount() {
 				tc.startTime,
 				tc.lockup,
 				tc.vesting,
+				false,
 			)
 			res, err := suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, msg)
 
@@ -304,7 +305,7 @@ func (suite *KeeperTestSuite) TestMsgClawback() {
 			suite.Require().NoError(err)
 
 			// Create Clawback Vesting Account
-			createMsg := types.NewMsgCreateClawbackVestingAccount(addr, addr2, tc.startTime, lockupPeriods, vestingPeriods)
+			createMsg := types.NewMsgCreateClawbackVestingAccount(addr, addr2, tc.startTime, lockupPeriods, vestingPeriods, false)
 			createRes, err := suite.app.VestingKeeper.CreateClawbackVestingAccount(ctx, createMsg)
 			suite.Require().NoError(err)
 			suite.Require().NotNil(createRes)
